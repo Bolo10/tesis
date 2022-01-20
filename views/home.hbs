@@ -1,0 +1,38 @@
+{{>header}}
+{{> navbar}}
+<form class="form " method="GET" action="/search">
+    <div class="container d-flex justify-content-center">
+        <div class="input-group rounded input-group-lg">
+            <input type="search" class="form-control rounded" onkeyup="showResults(this.value)" placeholder="Buscar..."
+                aria-describedby="inputGroup-sizing-lg">
+            <div class="autocomplete-items" id="search-results">
+            </div>
+        </div>
+    </div>
+
+
+
+</form>
+
+
+{{!--
+<script>
+
+    $(document).ready(function () {
+        var username = $('#username');
+        username.keyup(function () {
+            var value = username.val();
+            socket.emit('find_user', value);
+        });
+    });
+
+    socket.on('find_user_result', function (user) {
+        // treat result here
+    });
+</script>
+
+--}}
+
+{{> packages}}
+
+{{>footer}}

@@ -1,0 +1,101 @@
+body {
+  background-color: #fafafa;
+}
+
+.container {
+  margin-top: 25%;
+}
+.container-search {
+  margin-top: 10%;
+}
+.form-control {
+  border-right: 1 !important;
+  border-left: 1 !important;
+  border-color: black !important;
+}
+@media only screen and (min-width: 1326px) {
+  .buscar {
+    width: 500px !important;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .form-signin {
+    background-color: white;
+    border-radius: 10px;
+  }
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+}
+
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.register {
+  margin-bottom: 10px !important;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.search-links {
+  text-decoration: none;
+  color: black;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
