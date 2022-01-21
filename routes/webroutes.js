@@ -94,15 +94,13 @@ app.get('/dashboard', havepermissions, (req, res) => {
 })
 
 app.get('/addregister', havepermissions, async (req, res) => {
-    console.log(req.query.uid);
+
     let mydate = date.parse(req.query.mydate, 'YYYY-MM-DD');
     let inidate = date.format(mydate, 'YYYY-MM-DD')
     let findate = date.addMonths(mydate, 1)
     findate = date.format(findate, 'YYYY-MM-DD')
 
     let monto = parseFloat(req.query.monto);
-    console.log(inidate, findate, monto);
-
 
     const user = await usuario.findOne({ uid: req.query.uid })
 
@@ -112,7 +110,7 @@ app.get('/addregister', havepermissions, async (req, res) => {
         monto: monto
     }
     user.historial.push(historic)
-    user.save()
+    //user.save()
 
     res.json("entro")
 })
