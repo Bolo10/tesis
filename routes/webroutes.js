@@ -27,13 +27,6 @@ mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true }, (err,
 /*
 GET CODE
 */
-app.get('/', (req, res) => {
-    res.render('home', {
-        loged: req.session.loged,
-        nombre: req.session.username,
-        admin: req.session.role == 'ADMIN_ROLE' ? true : false,
-    })
-});
 
 app.get('/', (req, res) => {
 
@@ -43,6 +36,7 @@ app.get('/', (req, res) => {
         loged: req.session.loged,
         nombre: req.session.username,
         admin: req.session.role == 'ADMIN_ROLE' ? true : false,
+        uid: req.session.uid
     })
 });
 
@@ -115,6 +109,23 @@ app.get('/addregister', havepermissions, async (req, res) => {
     res.json("entro")
 })
 
+app.get('/users', havepermissions, (req, res) => {
+    usuario.find({}, { email: 1, role: 1, nombre: 1, uid: 1 }, (err, users) => {
+
+        let message = false
+        if (req.query.success) {
+            message = true
+        }
+        res.render('users', { usuarios: users, message })
+
+    })
+})
+
+app.get('/adduser', havepermissions, (req, res) => {
+    res.render('adduser', { message: false })
+
+})
+
 /*
 app.on('find_user', function (value) {
     User.findOne({ username: value }, function (err, user) {
@@ -146,7 +157,7 @@ app.post('/login', async (req, res) => {
                     req.session.nombre = user.nombre
                     req.session.username = user.username
                     req.session.email = user.email
-                    req.session.userid = user._id
+                    req.session.uid = user.uid
                     res.redirect('/')
                 } else {
                     res.render('login', { ok: false })
@@ -180,6 +191,28 @@ app.post('/signup', async (req, res) => {
         res.redirect('/signup')
     }
 
+})
+
+
+
+// UPDATE USER CODE
+
+app.post('/updateuser', havepermissions, (req, res) => {
+    let uid = req.body.uid
+
+
+    Promise.all([
+        usuario.findOne({ uid: uid }),
+
+    ]).then(([usuario]) => {
+        console.log(usuario);
+        let admin = false
+        if (usuario.role == 'ADMIN_ROLE') {
+            admin = true
+        }
+
+        res.render('updateuser', { usuario, admin, user: !admin })
+    });
 })
 
 module.exports = app
