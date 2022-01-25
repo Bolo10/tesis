@@ -1,0 +1,7 @@
+.dataTables_filter {
+  text-align: left !important;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+  justify-content: flex-start !important;
+}

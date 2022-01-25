@@ -121,6 +121,21 @@ app.get('/users', havepermissions, (req, res) => {
     })
 })
 
+app.get('/payusers', havepermissions, (req, res) => {
+
+    usuario.find({}, { email: 1, role: 1, nombre: 1, uid: 1 }, (err, users) => {
+
+        let message = false
+        if (req.query.success) {
+            message = true
+        }
+        res.render('userstopay', { usuarios: users, message })
+
+    })
+})
+
+
+
 app.get('/adduser', havepermissions, (req, res) => {
     res.render('adduser', { message: false })
 
@@ -244,7 +259,7 @@ app.post('/doupdateuser', havepermissions, async (req, res) => {
         }
         usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
             if (err) {
-                //  console.log(err);
+
                 return res.redirect("/error")
             }
             var string = encodeURIComponent(true);
@@ -252,5 +267,47 @@ app.post('/doupdateuser', havepermissions, async (req, res) => {
         })
     }
 })
+
+app.post('/updatepay', havepermissions, (req, res) => {
+    let uid = req.body.uid
+
+
+    Promise.all([
+        usuario.findOne({ uid: uid }),
+
+    ]).then(([usuario]) => {
+
+        let admin = false
+        if (usuario.role == 'ADMIN_ROLE') {
+            admin = true
+        }
+
+        res.render('updatepay', { usuario, admin, user: !admin })
+    });
+})
+
+app.get('/doupdatepay', havepermissions, async (req, res) => {
+    let mydate = date.parse(req.query.mydate, 'YYYY-MM-DD');
+    let inidate = date.format(mydate, 'YYYY-MM-DD')
+    let findate = date.addMonths(mydate, 1)
+    findate = date.format(findate, 'YYYY-MM-DD')
+    let monto = parseFloat(req.query.monto);
+
+    let idx = parseInt(req.query.idx)
+
+    const user = await usuario.findOne({ uid: req.query.uid })
+
+    let historic = {
+        initdate: inidate,
+        findate: findate,
+        monto: monto
+    }
+
+    user.historial[idx] = historic
+
+    //user.save()
+    res.json(user)
+})
+
 
 module.exports = app

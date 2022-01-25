@@ -103,6 +103,7 @@ function addRegister() {
 }
 
 function validation() {
+
     var mydate = document.getElementById('date');
     var monto = document.getElementById('monto');
     var btnGuardar = document.getElementById('btnGuardar');
@@ -136,5 +137,62 @@ function removeSpinner() {
     var d = document.getElementById('register');
     var d_nested = document.getElementById('spinner');
     d.removeChild(d_nested);
+}
+
+function validationpay(idx) {
+    let id = idx
+    var mydate = document.getElementById('date' + id);
+    var monto = document.getElementById('monto' + id);
+    var btnUpdate = document.getElementById('btnUpdate' + id);
+
+    if (mydate.value == "" || monto.value == "") {
+        btnUpdate.disabled = true;
+    } else {
+        btnUpdate.disabled = false;
+    }
+
+}
+
+function updatepay(idx) {
+    let id = idx
+    var mydate = document.getElementById('date' + id).value;
+    var monto = document.getElementById('monto' + id).value;
+    var uid = document.getElementById('uid').value;
+    console.log(id, mydate, monto, uid);
+    $.ajax({
+        type: 'GET',
+        url: '/doupdatepay',
+        data: { mydate: mydate, monto: monto, uid: uid, idx: id },
+        dataType: 'json'                              // <-- add this
+        //contentType: 'application/json; charset=utf-8' // <-- remove this
+    })
+        .done(function (result) {
+
+            var mydiv = document.getElementById('flush-collapse' + id)
+            mydiv.innerHTML = ""
+
+            var element2 = document.createElement('div');
+            var element3 = document.createElement('div');
+            element2.className = 'spinner-border text-dark';
+            element3.className = 'd-flex justify-content-center';
+            element3.id = "spinner"
+            element3.appendChild(element2)
+            mydiv.appendChild(element3);
+            setTimeout(() => {
+                mydiv.innerHTML = ""
+
+                var element1 = document.createElement('div');
+                element1.className = 'alert alert-success d-flex align-items-center';
+                element1.innerHTML = 'Has actualizado un pago con éxito.'
+                mydiv.appendChild(element1);
+            }, 500)
+
+        })
+        .fail(function (xhr, status, error) {
+
+        })
+        .always(function (data) {
+        });
+
 }
 

@@ -1,0 +1,115 @@
+{{> header}}
+
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        {{>dashbar}}
+        <input hidden id="uid" value="{{usuario.uid}}">
+
+        <form id="registerform" class="form-signin text-center" action="/doupdateuser" method="POST"
+            onsubmit="return submitvalidate()">
+
+            <h1 class="h3 mb-3 font-weight-normal">Modificar Pagos de {{usuario.nombre}}</h1>
+
+
+            <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+                <div class="card p-4">
+
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        {{#each usuario.historial}}
+                        {{#this}}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-heading{{@index}}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapse{{@index}}" aria-expanded="false"
+                                    aria-controls="flush-collapse{{@index}}">
+                                    <div class="alert alert-primary d-flex align-items-center" role="alert">
+                                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                            aria-label="Info:">
+                                            <use xlink:href="#info-fill" />
+                                        </svg>
+                                        <div>
+                                            <span class="join">{{initdate}} </span>
+                                        </div>
+                                    </div>
+                                </button>
+
+                            </h2>
+                            <div id="flush-collapse{{@index}}" class="accordion-collapse collapse"
+                                aria-labelledby="flush-heading{{@index}}" data-bs-parent="#accordionFlushExample">
+                                <label for="date" class="sr-only">Fecha</label>
+                                <input type="date" autocomplete="off" name="date" id="date{{@index}}"
+                                    class="form-control register" placeholder="" required="" autofocus=""
+                                    value="{{initdate}}" onchange="validationpay('{{@index}}')">
+
+                                <label for="monto" class="sr-only">Abono</label>
+                                <input type="number" autocomplete="off" name="monto" id="monto{{@index}}"
+                                    onchange="validationpay('{{@index}}')" class="form-control register" placeholder=""
+                                    required="" autofocus="" value="{{monto}}">
+                                <button name='btnUpdate{{@index}}' id='btnUpdate{{@index}}' type="button"
+                                    class="btn btn-secondary" onclick="updatepay({{@index}})"
+                                    disabled>Actualizar</button>
+                            </div>
+                        </div>
+                        {{/this}}
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+
+
+            <button class="btn btn-lg  btn-success btn-block" type="submit">Confirmar Cambios</button>
+        </form>
+    </div>
+</div>
+{{> packages}}
+<script src="/javascripts/register.js"></script>
+<script src="/assets/js/signup-helpers.js"></script>
+<script>
+    function alphaOnly(event) {
+        var key = event.keyCode;
+        return ((key >= 65 && key <= 90) || key == 8 || key == 9 || key == 32);
+    };
+    function alphanumericOnly(event) {
+        var key = event.keyCode;
+        return ((key >= 65 && key <= 90) || key == 8 || key == 9 || (key >= 48 && key <= 57) || (key >= 96 && key <= 105));
+    };
+    function ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+        // alert("You have entered an invalid email address!")
+        return (false)
+    }
+    $(document).ready(function () {
+
+        $("#inputEmail").on('keyup blur', function () {
+            emailb = ValidateEmail(document.getElementById("inputEmail").value)
+            if (emailb) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/emails',
+                    data: { emailt: document.getElementById("inputEmail").value },
+                    dataType: 'json'                              // <-- add this
+                    //contentType: 'application/json; charset=utf-8' // <-- remove this
+                })
+                    .done(function (result) {
+                        if (result.exist && document.getElementById('inputEmail').value != document.getElementById("emailp").value) {
+                            document.getElementById("emailver").innerHTML = '<span style="color: red;">Email ya registrado</span>'
+                            document.getElementById("inputEmail").setCustomValidity('El correo ya está resgistrado');
+                        } else {
+                            document.getElementById("emailver").innerHTML = '<span style="color: green;">Email disponible</span>'
+                            document.getElementById("inputEmail").setCustomValidity('');
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                    })
+                    .always(function (data) {
+                    });
+            } else {
+                document.getElementById("emailver").innerHTML = '<span style="color: red;">Email Inválido</span>'
+            }
+        });
+    });
+</script>
+{{> footer}}
