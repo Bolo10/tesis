@@ -215,4 +215,42 @@ app.post('/updateuser', havepermissions, (req, res) => {
     });
 })
 
+app.post('/doupdateuser', havepermissions, async (req, res) => {
+    if (req.body.password == '') {
+        user = {
+            nombre: req.body.nombre,
+            username: req.body.username,
+            role: req.body.role,
+            email: req.body.email
+
+        }
+        usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            if (err) {
+                // 
+                return res.redirect("/error")
+            }
+            var string = encodeURIComponent(true);
+            res.redirect("/users?success=" + string)
+        })
+    } else {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        user = {
+            nombre: req.body.nombre,
+            username: req.body.username,
+            role: req.body.role,
+            email: req.body.email,
+            password: hashedPassword
+
+        }
+        usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            if (err) {
+                //  console.log(err);
+                return res.redirect("/error")
+            }
+            var string = encodeURIComponent(true);
+            res.redirect("/users?success=" + string)
+        })
+    }
+})
+
 module.exports = app
