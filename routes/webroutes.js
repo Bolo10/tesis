@@ -232,7 +232,7 @@ app.post('/updateuser', havepermissions, (req, res) => {
 
 app.post('/doupdateuser', havepermissions, async (req, res) => {
     if (req.body.password == '') {
-        user = {
+        let user = {
             nombre: req.body.nombre,
             username: req.body.username,
             role: req.body.role,
@@ -249,7 +249,7 @@ app.post('/doupdateuser', havepermissions, async (req, res) => {
         })
     } else {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        user = {
+        let user = {
             nombre: req.body.nombre,
             username: req.body.username,
             role: req.body.role,

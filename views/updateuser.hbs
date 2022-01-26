@@ -31,25 +31,11 @@
             <label class="sr-only" for="role">Rol del Usuario</label>
             <select class="form-control register" id="role" name="role" onchange="rolec()">
                 <option selected="true" disabled="disabled"> Seleccione un rol</option>
-                <option value="USER_ROLE" {{#if user}} selected {{/if}}>Cliente</option>
-                <option value="ADMIN_ROLE" {{#if admin}} selected {{/if}}>Administrador</option>
+                <option value="USER_ROLE" {{#if user}} selected {{/if}}>Alumno</option>
+                <option value="ADMIN_ROLE" {{#if admin}} selected {{/if}}>Entrenador</option>
             </select>
             <input hidden name="idusuario" value="{{usuario._id}}">
-            <label for="inputPassword" class="sr-only">Contraseña</label>
-            <input type="password" autocomplete="off" name="password" id="inputPassword" class="form-control "
-                placeholder="Contraseña" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-            <small class="form-text text-muted text-left register">Debe contener <span id="letter">una minúscula</span>,
-                <span id="capital">una mayúscula</span>, <span id="number">un número</span> y <span id="lenght">al menos
-                    8
-                    caracteres.
-                </span></small>
-            <label for="inputCPassword" class="sr-only">Confirmar Contraseña</label>
-            <input type="password" autocomplete="off" id="inputCPassword" class="form-control register"
-                placeholder="Confirmar Contraseña" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-            <small class="form-text text-muted text-left"><span id="confmsg"></span></small>
-            <div class="checkbox mb-3">
 
-            </div>
             <button class="btn btn-lg  btn-success btn-block" type="submit">Confirmar Cambios</button>
         </form>
     </div>
