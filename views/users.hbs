@@ -12,7 +12,9 @@
                         <th>Email</th>
                         <th>Nombre</th>
                         <th>Rol</th>
+                        <th>Inscripción</th>
                         <th>Editar</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,11 +22,19 @@
                     <tr>
                         <td>{{this.email}}</td>
                         <td>{{this.nombre}}</td>
+
                         <td>{{this.role}}</td>
+                        <td>{{#if this.inscripcion}} SI {{else}} NO {{/if}}</td>
                         <td>
                             <form method="POST" action="/updateuser">
                                 <input hidden value="{{this.uid}}" name="uid">
                                 <input type="submit" value="Modificar">
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="/deleteuser">
+                                <input hidden value="{{this.uid}}" name="duid">
+                                <input type="submit" value="Eliminar Usuario">
                             </form>
                         </td>
                     </tr>

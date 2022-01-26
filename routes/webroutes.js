@@ -84,7 +84,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/dashboard', havepermissions, (req, res) => {
-    res.render('dashboard', { loged: false })
+    res.render('dashboard', { loged: false, nombre: req.session.username })
 })
 
 app.get('/addregister', havepermissions, async (req, res) => {
@@ -110,7 +110,7 @@ app.get('/addregister', havepermissions, async (req, res) => {
 })
 
 app.get('/users', havepermissions, (req, res) => {
-    usuario.find({}, { email: 1, role: 1, nombre: 1, uid: 1 }, (err, users) => {
+    usuario.find({}, { email: 1, role: 1, nombre: 1, uid: 1, inscripcion: 1 }, (err, users) => {
 
         let message = false
         if (req.query.success) {
@@ -220,52 +220,45 @@ app.post('/updateuser', havepermissions, (req, res) => {
         usuario.findOne({ uid: uid }),
 
     ]).then(([usuario]) => {
-        console.log(usuario);
+
         let admin = false
         if (usuario.role == 'ADMIN_ROLE') {
             admin = true
         }
+        var pagado = false
+        var nopagado = false
+        if (usuario.incripcion == false) {
+            pagado = false
+            nopagado = true
+        } else {
+            pagado = true
+            nopagado = false
+        }
+
+
 
         res.render('updateuser', { usuario, admin, user: !admin })
     });
 })
 
 app.post('/doupdateuser', havepermissions, async (req, res) => {
-    if (req.body.password == '') {
-        let user = {
-            nombre: req.body.nombre,
-            username: req.body.username,
-            role: req.body.role,
-            email: req.body.email
-
-        }
-        usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
-            if (err) {
-                // 
-                return res.redirect("/error")
-            }
-            var string = encodeURIComponent(true);
-            res.redirect("/users?success=" + string)
-        })
-    } else {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        let user = {
-            nombre: req.body.nombre,
-            username: req.body.username,
-            role: req.body.role,
-            email: req.body.email,
-            password: hashedPassword
-
-        }
-        usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
-            if (err) {
-
-                return res.redirect("/error")
-            }
-            var string = encodeURIComponent(true);
-            res.redirect("/users?success=" + string)
-        })
+    console.log(typeof (req.body.inscripcion));
+    let user = {
+        nombre: req.body.nombre,
+        username: req.body.username,
+        role: req.body.role,
+        email: req.body.email,
+        inscripcion: req.body.inscripcion
     }
+    usuario.findByIdAndUpdate(req.body.uid, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+        if (err) {
+            // 
+            return res.redirect("/error")
+        }
+
+        res.redirect("dashboard")
+    })
+
 })
 
 app.post('/updatepay', havepermissions, (req, res) => {
@@ -309,5 +302,14 @@ app.get('/doupdatepay', havepermissions, async (req, res) => {
     res.json(user)
 })
 
+
+app.post('/deleteuser', havepermissions, (req, res) => {
+    let uid = req.body.duid
+    usuario.deleteOne({ uid: req.body.duid }, function (err) {
+
+    });
+
+    res.redirect("dashboard")
+})
 
 module.exports = app

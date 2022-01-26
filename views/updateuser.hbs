@@ -3,6 +3,8 @@
 <div class="container-fluid">
     <div class="row flex-nowrap">
         {{>dashbar}}
+
+
         <input hidden id="emailp" value="{{usuario.email}}">
         <form id="registerform" class="form-signin text-center" action="/doupdateuser" method="POST"
             onsubmit="return submitvalidate()">
@@ -34,7 +36,16 @@
                 <option value="USER_ROLE" {{#if user}} selected {{/if}}>Alumno</option>
                 <option value="ADMIN_ROLE" {{#if admin}} selected {{/if}}>Entrenador</option>
             </select>
-            <input hidden name="idusuario" value="{{usuario._id}}">
+
+            <label class="sr-only" for="role">Inscripción</label>
+            <select class="form-control register" id="inscripcion" name="inscripcion" onchange="rolec()">
+                <option selected="true" disabled="disabled"> Seleccione si ya esta inscrito</option>
+
+                <option value="true">Pagado</option>
+                <option value="false">No Pagado</option>
+
+            </select>
+            <input hidden name="uid" value="{{usuario._id}}">
 
             <button class="btn btn-lg  btn-success btn-block" type="submit">Confirmar Cambios</button>
         </form>

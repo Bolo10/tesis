@@ -47,6 +47,10 @@ let usuarioSchema = new schema({
         initdate: { type: String },
         findate: { type: String },
         monto: { type: Number },
+    }, inscripcion: {
+        type: Boolean,
+        default: false
+
     }
 }, { collection: 'users' })
 usuarioSchema.plugin(uniqueValidator, { message: `{PATH} debe ser único` })
