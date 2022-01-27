@@ -1,18 +1,67 @@
 {{>header}}
 {{> navbar}}
-<form class="form " method="GET" action="/search">
-    <div class="container d-flex justify-content-center">
-        <div class="input-group rounded input-group-lg">
-            <input type="search" class="form-control rounded" onkeyup="showResults(this.value)" placeholder="Buscar..."
-                aria-describedby="inputGroup-sizing-lg">
-            <div class="autocomplete-items" id="search-results">
+
+<div class="container">
+    <div class="row " style="margin: 10px;">
+        <div class="col-md-12 d-flex align-items-center justify-content-center">
+            {{>logo}}
+        </div>
+    </div>
+
+    <div class="row " style="margin: 10px;">
+        <div class="col-md-12">
+            <div class="input-group rounded input-group-lg">
+                <form class="form " method="GET" action="/search"></form>
+                <input type="search" class="form-control rounded" onkeyup="showResults(this.value)"
+                    placeholder="Buscar..." aria-describedby="inputGroup-sizing-lg">
+                <div class="autocomplete-items" id="search-results">
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row " style="margin: 10px;">
+        <div class="col-md-6">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <h3 class="mb-0">Administración</h3>
+                    <strong class="d-inline-block mb-2 text-primary">Herramienta</strong>
+
+                    <p class="card-text mb-auto">Esta herramienta administrativa esta desarrolalda para el
+                        funcionamiento de la escuela, con el objetivo
+                        de ayudar a los entrenadores a gestionar los pagos de sus alumnos.
+                    </p>
+                </div>
+                <div class="col-auto d-none d-lg-block" style="padding-right:5px ;">
+                    <i class=" bi bi-cash-coin" style="font-size: 10rem; color: springgreen;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+
+                    <h3 class="mb-0">Eficiencia</h3>
+                    <strong class="d-inline-block mb-2 text-success">Diseño</strong>
+
+                    <p class="mb-auto">La herramienta cuenta con diseños personalizados e interacciones intuitivas
+                        lo cual
+                        permite al usuario tener una experiencia agradable.
+                    </p>
+                </div>
+                <div class="col-auto d-none d-lg-block " style="padding-right:5px ;">
+                    <i class="bi bi-pencil-square" style="font-size: 10rem; color: steelblue;"></i>
+                </div>
             </div>
         </div>
     </div>
 
 
+</div>
+<div class="container-search">
 
-</form>
+</div>
+
 
 
 {{!--

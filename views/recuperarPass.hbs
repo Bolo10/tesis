@@ -18,24 +18,23 @@
     }
 </style>
 
-<form class="form-signin text-center" action="/login" method="POST">
+<form class="form-signin text-center" action="/recuperarPass" method="POST">
 
     <a class="nav-link" style="color: black" href="/">
-        <h2 class="h2 mb-3 font-weight-normal">Ecuavoley mi
-            Mundo</h2>
+        {{!-- <h2 class="h2 mb-3 font-weight-normal">Ecuavoley mi
+            Mundo</h2> --}}
     </a>
-    <h1 class="h3 mb-3 font-weight-normal">Iniciar Sesión</h1>
+    <h1 class="h3 mb-3 font-weight-normal">Recuperar Contraseña</h1>
     <small class="form-text text-muted" style="margin-bottom: 10px;" {{#if ok}}hidden{{/if}}><span id="errmsg"
-            style="color: red;">Email o Contraseña incorrectos</span></small>
-    <label for="inputEmail" class="sr-only">Email</label>
+            style="color: red;">Email incorrecto</span></small>
+    <label for="inputEmail" class="sr-only">Ingrese el email con el que se ha registrado</label>
     <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required="" autofocus="">
-    <label for="inputPassword" class="sr-only">Contraseña</label>
-    <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required="">
+    {{!-- <label for="inputPassword" class="sr-only">Contraseña</label>
+    <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required=""> --}}
     <div class="checkbox mb-3">
         <a href="/signup">¿No estás registrado?</a>
-        <a href="/recuperarPass">Recuperar contraseña</a>
     </div>
-    <button class="btn btn-lg  btn-dark btn-block" type="submit">Iniciar Sesión</button>
+    <button class="btn btn-lg  btn-dark btn-block" type="submit">Enviar</button>
 </form>
 <div class="fb-login-button" data-size="large" data-button-type="continue_with" data-layout="default"
     data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div>

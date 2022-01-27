@@ -24,6 +24,14 @@ mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true }, (err,
     console.log("Base de datos online");
 })
 
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'tesisdecimo88@gmail.com',
+        pass: 'TesisDecimo27#'
+    }
+});
+
 /*
 GET CODE
 */
@@ -67,13 +75,32 @@ app.get('/login', (req, res) => {
     res.render('login', { loged: false })
 })
 
-app.get('/profile', async (req, res) => {
+app.get('/updateprofile', islogged, async (req, res) => {
     const user = await usuario.findOne({ uid: req.query.uid })
 
-    res.render('profile', {
-        user: user,
+    res.render('updateprofile', {
+        usuario: user,
         loged: req.session.loged,
         nombre: req.session.username,
+        uid: req.session.uid,
+        admin: req.session.role == 'ADMIN_ROLE' ? true : false,
+    })
+})
+
+app.get('/profile', async (req, res) => {
+    const user = await usuario.findOne({ uid: req.query.uid })
+    var sexo
+    if (user.sexo == "men") {
+        sexo = true
+    } else {
+        sexo = false
+    }
+    res.render('profile', {
+        user: user,
+        sexo: sexo,
+        loged: req.session.loged,
+        nombre: req.session.username,
+        uid: req.session.uid,
         admin: req.session.role == 'ADMIN_ROLE' ? true : false,
     })
 })
@@ -104,9 +131,27 @@ app.get('/addregister', havepermissions, async (req, res) => {
         monto: monto
     }
     user.historial.push(historic)
-    //user.save()
 
-    res.json("entro")
+    user.save()
+
+    let mensaje = '';
+    mensaje += 'Su pago se ha realizado con exito'
+    let mailOptions = {
+        from: 'tesisdecimo89@gmail.com',
+        to: user.email,
+        subject: 'Abono Academia Ecuavoly Registrada',
+        text: mensaje
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email enviado: ' + info.response);
+        }
+    });
+
+    res.json({ ok: true })
+
 })
 
 app.get('/users', havepermissions, (req, res) => {
@@ -195,7 +240,7 @@ app.post('/signup', async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         let user = new usuario({
             uid: uuid(),
-            nombre: req.body.nombre,
+            nombre: req.body.nombre.toLowerCase(),
             username: req.body.username,
             email: req.body.email.toLowerCase(),
             password: hashedPassword
@@ -298,18 +343,208 @@ app.get('/doupdatepay', havepermissions, async (req, res) => {
 
     user.historial[idx] = historic
 
-    //user.save()
+    user.save()
+
     res.json(user)
 })
 
 
 app.post('/deleteuser', havepermissions, (req, res) => {
-    let uid = req.body.duid
-    usuario.deleteOne({ uid: req.body.duid }, function (err) {
 
+    usuario.deleteOne({ uid: req.body.duid }, function (err) {
     });
 
     res.redirect("dashboard")
 })
+
+app.post('/recuperarPass', async (req, res) => {
+    const user = await usuario.findOne({ email: req.body.email.toLowerCase() })
+
+    let err = false
+    if (err) {
+        // console.log("eror base");
+    } else {
+
+        if (user) {
+
+            let mensaje = '';
+            // mensaje += 'De clic en el siguiente enlace para realizar el cambio de su contraseña: https://app-emm.herokuapp.com/editarPass?uid='+user.uid
+            mensaje += 'De clic en el siguiente enlace para realizar el cambio de su contraseña: http://localhost:3000/editarPass?uid=' + user.uid
+            let mailOptions = {
+                from: 'tesisdecimo88@gmail.com',
+                to: user.email,
+                subject: 'Recuperación de contraseña',
+                text: mensaje
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email enviado: ' + info.response);
+                }
+            });
+            res.redirect('/login')
+
+
+        } else {
+            res.render('login', { ok: false })
+
+        }
+    }
+
+
+
+})
+
+
+app.get('/recuperarPass', (req, res) => {
+    res.render('recuperarPass', { loged: false })
+})
+app.get('/editarPass', (req, res) => {
+
+    let uid = req.query.uid
+
+
+    Promise.all([
+        usuario.findOne({ uid: uid }),
+
+    ]).then(([usuario]) => {
+        console.log(usuario);
+        let admin = false
+        if (usuario.role == 'ADMIN_ROLE') {
+            admin = true
+        }
+
+        res.render('editarPass', { usuario, admin, user: !admin })
+    });
+})
+app.post('/doupdatePass', async (req, res) => {
+    if (req.body.password == '') {
+
+        if (err) {
+            // 
+            return res.redirect("/error")
+        }
+
+    } else {
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        let user = {
+            password: hashedPassword
+        }
+        usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            if (err) {
+                //  console.log(err);
+                return res.redirect("/error")
+            }
+            var string = encodeURIComponent(true);
+            res.redirect("/login?success=" + string)
+        })
+    }
+})
+
+app.post('/change', (req, res) => {
+    let iduser = req.session.uid
+
+    switch (req.body.atr) {
+        case 'nombre':
+            usuario.findOneAndUpdate(iduser, { nombre: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+                req.session.nombre = req.body.data
+                res.json({ ok: true })
+            })
+            break;
+        case 'username':
+            usuario.findOneAndUpdate(iduser, { username: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+                req.session.username = req.body.data
+                res.json({ ok: true })
+            })
+            break;
+        case 'email':
+            usuario.findOneAndUpdate(iduser, { email: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+                req.session.email = req.body.data
+                res.json({ ok: true })
+            })
+            break;
+        case 'edad':
+            usuario.findOneAndUpdate(iduser, { edad: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+
+                res.json({ ok: true })
+            })
+            break;
+        case 'cell':
+            usuario.findOneAndUpdate(iduser, { cell: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+
+                res.json({ ok: true })
+            })
+            break;
+        case 'posicion':
+            usuario.findOneAndUpdate(iduser, { posicion: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+
+                res.json({ ok: true })
+            })
+            break;
+        case 'horario':
+            usuario.findOneAndUpdate(iduser, { horario: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+
+                res.json({ ok: true })
+            })
+            break;
+        case 'sexo':
+            usuario.findOneAndUpdate(iduser, { sexo: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                if (err) {
+                    return res.redirect("/error")
+                }
+
+                res.json({ ok: true, sexo: true })
+            })
+            break;
+        case 'password':
+            usuario.findOne({ uid: req.session.uid }, (err, user) => {
+                bcrypt.compare(req.body.apassword, user.password, (err, result) => {
+                    if (result) {
+                        bcrypt.hash(req.body.npassword, 10, function (err, hashedPassword) {
+
+                            usuario.findByIdAndUpdate(iduser, { password: hashedPassword }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+                                if (err) {
+                                    return res.redirect("/error")
+                                }
+                                //req.session.email = req.body.data
+                                res.json({ ok: true })
+                            })
+
+                        })
+                    } else {
+                        res.json({ ok: false })
+                    }
+                })
+            })
+            break;
+    }
+})
+
+app.get('*', function (req, res) {
+    res.redirect('/');
+});
 
 module.exports = app

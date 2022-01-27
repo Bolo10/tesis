@@ -17,7 +17,10 @@
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a class="dropdown-item" href="/profile?uid={{uid}}">Cuenta</a></li>
+              {{#uid}}
+              <li><a class="dropdown-item" href="/profile?uid={{this}}">Cuenta</a></li>
+              <li><a class="dropdown-item" href="/updateprofile?uid={{this}}">Editar Perfil</a></li>
+              {{/uid}}
               <li>{{#if admin}}
                 <a class="dropdown-item" href="/dashboard">Dashboard</a>
                 {{/if}}

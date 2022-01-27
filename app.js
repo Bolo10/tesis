@@ -38,6 +38,8 @@ hbs.registerPartials(__dirname + '/views/parciales');
 app.set('view engine', 'hbs');
 
 app.use(require('./routes/webroutes'),)
+app.use(require('./routes/messageRoute'));
+
 app.listen(process.env.PORT, () => {
     console.log("Escuchando");
 });

@@ -27,6 +27,26 @@ let usuarioSchema = new schema({
         required: [true, "El correo es requerido"],
         unique: true
     },
+    edad: {
+        type: Number,
+
+    },
+    cell: {
+        type: String,
+        default: ''
+    },
+    posicion: {
+        type: String,
+        default: ''
+    },
+    horario: {
+        type: String,
+        default: ''
+    },
+    sexo: {
+        type: String,
+        default: ''
+    },
     password: {
         type: String,
         required: true
