@@ -12,11 +12,11 @@
         {{/if}}
         <div class=" image d-flex flex-column justify-content-center align-items-center"> <button
                 class="btn btn-secondary btnprofile"> <img
-                    src="{{#if sexo}}/assets/images/men.png{{else}}/assets/images/women.png{{/if}}" height="100"
+                    src="{{#if sexo}}/assets/images/men.png{{else}}/assets/images/woman.png{{/if}}" height="100"
                     width="100" /></button> <span class="name mt-3">{{user.nombre}}</span> <span
                 class="idd">@{{user.username}}</span>
 
-            <div style="display: none;"> <input id="uid" type="hidden" value="{{user.uid}}"> </div>
+            <div style="display: none;"> <input id="uid" type="" value="{{user._id}}"> </div>
 
             <div class="d-flex flex-row justify-content-center align-items-center mt-3">
                 <span class="follow">Soy <span class="number">{{user.posicion}}</span></span>
@@ -105,12 +105,10 @@
                     <h3>Válido hasta: <span class="badge bg-success">{{findate}}</span></h3>
                     <h3>Abonado: <span class="badge bg-warning text-dark">${{monto}}</span></h3>
                 </div>
-
             </div>
             {{/this}}
             {{/each}}
         </div>
-
     </div>
 </div>
 
@@ -118,30 +116,41 @@
 
 
 {{else}}
+
 <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
     <div class="card p-4">
 
-        {{#each user.historial}}
         <div class="accordion accordion-flush" id="accordionFlushExample">
+            {{#each user.historial}}
+            {{#this}}
             <div class="accordion-item">
-                <h2 class="accordion-header" id="flush-headingOne">
+
+                <h2 class="accordion-header" id="flush-heading{{@index}}">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                        {{user.historial.[0]}}
+                        data-bs-target="#flush-collapse{{@index}}" aria-expanded="false"
+                        aria-controls="flush-collapse{{@index}}">
+                        <div class="alert alert-primary d-flex align-items-center" role="alert">
+                            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                                <use xlink:href="#info-fill" />
+                            </svg>
+                            <div>
+                                <span class="join">{{initdate}} </span>
+                            </div>
+                        </div>
                     </button>
+
                 </h2>
-                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-                    data-bs-parent="#accordionFlushExample">
-                    <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate
-                        the <code>.accordion-flush</code> class. This is the first item's accordion body.</div>
+                <div id="flush-collapse{{@index}}" class="accordion-collapse collapse"
+                    aria-labelledby="flush-heading{{@index}}" data-bs-parent="#accordionFlushExample">
+                    <h3>Válido hasta: <span class="badge bg-success">{{findate}}</span></h3>
+                    <h3>Abonado: <span class="badge bg-warning text-dark">${{monto}}</span></h3>
                 </div>
             </div>
+            {{/this}}
+            {{/each}}
         </div>
-        {{/each}}
-
     </div>
 </div>
-
 
 {{/if}}
 {{> packages}}

@@ -75,7 +75,7 @@ function addRegister() {
     var uid = document.getElementById('uid').value;
 
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: '/addregister',
         data: { mydate: mydate, monto: monto, uid: uid },
         dataType: 'json'                              // <-- add this

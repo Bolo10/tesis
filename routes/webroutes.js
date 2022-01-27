@@ -117,42 +117,64 @@ app.get('/dashboard', havepermissions, (req, res) => {
     res.render('dashboard', { loged: false, nombre: req.session.username })
 })
 
-app.get('/addregister', havepermissions, async (req, res) => {
+app.post('/addregister', havepermissions, async (req, res) => {
+    console.log(req.body.uid);
 
-    let mydate = date.parse(req.query.mydate, 'YYYY-MM-DD');
+    let mydate = date.parse(req.body.mydate, 'YYYY-MM-DD');
     let inidate = date.format(mydate, 'YYYY-MM-DD')
     let findate = date.addMonths(mydate, 1)
     findate = date.format(findate, 'YYYY-MM-DD')
 
-    let monto = parseFloat(req.query.monto);
+    let monto = parseFloat(req.body.monto);
 
-    const user = await usuario.findOne({ uid: req.query.uid })
+    const user = usuario.findOne({ _id: req.body.uid }, (err, data) => {
 
-    let historic = {
-        initdate: inidate,
-        findate: findate,
-        monto: monto
-    }
-    user.historial.push(historic)
-
-    user.save()
-
-    let mensaje = '';
-    mensaje += 'Su pago se ha realizado con exito'
-    let mailOptions = {
-        from: 'tesisdecimo89@gmail.com',
-        to: user.email,
-        subject: 'Abono Academia Ecuavoly Registrada',
-        text: mensaje
-    };
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email enviado: ' + info.response);
+        let historic = {
+            initdate: inidate,
+            findate: findate,
+            monto: monto
         }
+        data.historial.push(historic)
+        console.log(data._id);
+
+        // FUNCION DE NO REPETIR FECHAS 
+
+        usuario.findByIdAndUpdate(data._id, { historial: data.historial }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            console.log(usuarioBD);
+            if (err) {
+                return res.redirect("/error")
+            }
+
+        })
+        //console.log(data.historial);
     });
 
+
+
+
+
+
+
+
+
+
+    /*
+        let mensaje = '';
+        mensaje += 'Su pago se ha realizado con exito'
+        let mailOptions = {
+            from: 'tesisdecimo89@gmail.com',
+            to: user.email,
+            subject: 'Abono Academia Ecuavoly Registrada',
+            text: mensaje
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email enviado: ' + info.response);
+            }
+        });
+    */
     res.json({ ok: true })
 
 })
@@ -189,15 +211,6 @@ app.get('/adduser', havepermissions, (req, res) => {
 
 })
 
-/*
-app.on('find_user', function (value) {
-    User.findOne({ username: value }, function (err, user) {
-        if (err) throw err;
-        if (!user) socket.emit('find_user_result', {});
-        else socket.emit('find_user_result', user);
-    });
-})
-*/
 
 /*
 POST CODE
@@ -263,7 +276,6 @@ app.post('/signup', async (req, res) => {
 app.post('/updateuser', havepermissions, (req, res) => {
     let uid = req.body.uid
 
-
     Promise.all([
         usuario.findOne({ uid: uid }),
 
@@ -283,14 +295,12 @@ app.post('/updateuser', havepermissions, (req, res) => {
             nopagado = false
         }
 
-
-
         res.render('updateuser', { usuario, admin, user: !admin })
     });
 })
 
 app.post('/doupdateuser', havepermissions, async (req, res) => {
-    console.log(typeof (req.body.inscripcion));
+
     let user = {
         nombre: req.body.nombre,
         username: req.body.username,
@@ -447,11 +457,11 @@ app.post('/doupdatePass', async (req, res) => {
 })
 
 app.post('/change', (req, res) => {
-    let iduser = req.session.uid
-
+    let iduser = req.body.uid
+    console.log(iduser);
     switch (req.body.atr) {
         case 'nombre':
-            usuario.findOneAndUpdate(iduser, { nombre: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { nombre: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -460,7 +470,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'username':
-            usuario.findOneAndUpdate(iduser, { username: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { username: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -469,7 +479,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'email':
-            usuario.findOneAndUpdate(iduser, { email: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { email: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -478,7 +488,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'edad':
-            usuario.findOneAndUpdate(iduser, { edad: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { edad: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -487,7 +497,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'cell':
-            usuario.findOneAndUpdate(iduser, { cell: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { cell: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -496,7 +506,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'posicion':
-            usuario.findOneAndUpdate(iduser, { posicion: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { posicion: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -505,7 +515,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'horario':
-            usuario.findOneAndUpdate(iduser, { horario: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { horario: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -514,7 +524,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'sexo':
-            usuario.findOneAndUpdate(iduser, { sexo: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            usuario.findByIdAndUpdate(iduser, { sexo: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }
@@ -523,7 +533,7 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'password':
-            usuario.findOne({ uid: req.session.uid }, (err, user) => {
+            usuario.findById({ _id: iduser }, (err, user) => {
                 bcrypt.compare(req.body.apassword, user.password, (err, result) => {
                     if (result) {
                         bcrypt.hash(req.body.npassword, 10, function (err, hashedPassword) {

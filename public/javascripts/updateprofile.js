@@ -7,46 +7,24 @@ function addchange(elemento, atributo) {
         }
     }
 
-    if (atributo == "cdesc") {
-        var mycreator = document.getElementById(elemento).value
-        var flag = creators(mycreator)
-        if (flag) {
-            console.log("entra2")
-            mya(elemento, atributo)
-        } else {
-            $('.dos').toast('show');
-        }
-    } else {
+    mya(elemento, atributo)
 
-        mya(elemento, atributo)
-    }
-
-}
-function sendgender() {
-    var radios = document.getElementsByName('gender');
-
-    for (var i = 0, length = radios.length; i < length; i++) {
-        if (radios[i].checked) {
-            // do whatever you want with the checked radio
-
-            mya(radios[i].value, 'sexo')
-            // only one radio can be logically checked, don't check the rest
-            break;
-        }
-    }
 }
 function mya(elemento, atributo) {
+    var uid = document.getElementById('uid').value
+    console.log(uid);
     let data
     if (atributo == 'sexo') {
         data = elemento
     } else {
         data = document.getElementById(elemento).value
     }
+    console.log(data);
     $.ajax({
         credentials: 'same-origin',
         type: 'POST',
         url: '/change',
-        data: { data: data, atr: atributo },
+        data: { data: data, atr: atributo, uid },
         dataType: 'json'
 
     })
@@ -77,6 +55,20 @@ function mya(elemento, atributo) {
         .always(function (data) {
         });
 }
+function sendgender() {
+    var radios = document.getElementsByName('gender');
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            // do whatever you want with the checked radio
+
+            mya(radios[i].value, 'sexo')
+            // only one radio can be logically checked, don't check the rest
+            break;
+        }
+    }
+}
+
 function changepass() {
     if (document.getElementById('inputPassword').value == document.getElementById('inputCPassword').value && document.getElementById("inputPassword").validity.valid && document.getElementById("apassword").validity.valid) {
         $.ajax({
