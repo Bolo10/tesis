@@ -89,11 +89,14 @@ app.get('/updateprofile', islogged, async (req, res) => {
 
 app.get('/profile', async (req, res) => {
     const user = await usuario.findOne({ uid: req.query.uid })
-    var sexo
+
+
     if (user.sexo == "men") {
-        sexo = true
+        var sexo = true
+
     } else {
-        sexo = false
+        var sexo = false
+
     }
     res.render('profile', {
         user: user,
