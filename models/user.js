@@ -47,6 +47,10 @@ let usuarioSchema = new schema({
         type: String,
         default: ''
     },
+    entrenador: {
+        type: String,
+        default: ''
+    },
     password: {
         type: String,
         required: true

@@ -11,33 +11,36 @@
             </li>
             <li>
                 <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span> </a>
+                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span> </a>
                 <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                     <li class="w-100">
                         <a href="/users" class="nav-link px-0"> <span class="d-none d-sm-inline">Ver Usuarios</span>
-                            <i class="bi bi-person-plus-fill"></i></a>
+                            <i class="fs-4 bi-person-plus-fill"></i></a>
                     </li>
                     <li>
                         <a href="/payusers" class="nav-link px-0"><span class="d-none d-sm-inline">Ver Pagos de
                                 Usuarios</span>
-                            <i class="bi bi-person-video2"></i> </a>
+                            <i class="fs-4 bi-person-video2"></i> </a>
                     </li>
                 </ul>
             </li>
-            <li>
-                <a href="#" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Orders</span></a>
-            </li>
+
             <li>
                 <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                    <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>
+                    <i class="fs-4 bi-table"></i></i> <span class="ms-1 d-none d-sm-inline">Pagos</span></a>
                 <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                    {{#data.uid}}
                     <li class="w-100">
-                        <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 1</a>
+                        <a href="/pays?uid={{this}}" class="nav-link px-0"><span class="d-none d-sm-inline">Proximos
+                                Pagos</span>
+                            <i class="fs-4 bi-calendar2-check"></i> </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 2</a>
+                    <li class="w-100">
+                        <a href="/myusers?uid={{this}}" class="nav-link px-0"><span class="d-none d-sm-inline">Mis
+                                alumnos</span>
+                            <i class="fs-4 bi-person-lines-fill"></i></a>
                     </li>
+                    {{/data.uid}}
                 </ul>
             </li>
             <li>
@@ -68,7 +71,7 @@
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                 id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                <span class="d-none d-sm-inline mx-1">{{nombre}}</span>
+                <span class="d-none d-sm-inline mx-1">{{data.username}}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                 <li><a class="dropdown-item" href="#">New project...</a></li>
@@ -81,4 +84,5 @@
             </ul>
         </div>
     </div>
+
 </div>

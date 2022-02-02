@@ -45,6 +45,14 @@
                 <option value="false">No Pagado</option>
 
             </select>
+            <label class="sr-only" for="role">Entrenador</label>
+            <select class="form-control register" id="inscripcion" name="inscripcion" onchange="rolec()">
+                <option selected="true" disabled="disabled"> Seleccione si su entrenador</option>
+
+                <option value="true">Pagado</option>
+                <option value="false">No Pagado</option>
+
+            </select>
             <input hidden name="uid" value="{{usuario._id}}">
 
             <button class="btn btn-lg  btn-success btn-block" type="submit">Confirmar Cambios</button>

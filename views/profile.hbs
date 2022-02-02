@@ -34,6 +34,8 @@
                     {{user.horario}}</span></span>
             </div>
 
+
+            {{#if admin}}
             <form id="myform" class="col-md-8 m-auto">
                 <div class="form-group">
                     <input type="text" placeholder="Ingresa el número de destino" class="form-control" name="sendemail"
@@ -45,7 +47,6 @@
             </form>
             <p id="status-send-1" class="alert alert-success text-center mt-4">Mensaje enviado correctamente</p>
             <p id="status-send-2" class="alert alert-danger text-center mt-4">Error al enviar mensaje</p>
-            {{#if admin}}
             <div class=" px-2 rounded mt-4 date "> <span class="join">Entrenador</span> </div>
             {{else}}
             <div class=" px-2 rounded mt-4 date "> <span class="join">Alumno</span> </div>

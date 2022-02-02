@@ -15,10 +15,12 @@ const nodemailer = require('nodemailer');
 var hbs2 = require('nodemailer-express-handlebars');
 const myuser = process.env.MAIL
 const mypass = process.env.PASSWORD
+const dev = process.env.URLOCAL
+const prod = process.env.URLDB
 var path = require('path');
 const user = require('../models/user');
 const { exec } = require('child_process');
-
+var { sendWhats } = require('./whats.js')
 mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true }, (err, res) => {
     if (err) throw err
     console.log("Base de datos online");
@@ -114,11 +116,19 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/dashboard', havepermissions, (req, res) => {
-    res.render('dashboard', { loged: false, nombre: req.session.username })
+    let data = {
+        loged: req.session.loged,
+        role: req.session.role,
+        nombre: req.session.nombre,
+        username: req.session.username,
+        email: req.session.email,
+        uid: req.session.uid
+    }
+    res.render('dashboard', { loged: true, data: data })
 })
 
 app.post('/addregister', havepermissions, async (req, res) => {
-    console.log(req.body.uid);
+
 
     let mydate = date.parse(req.body.mydate, 'YYYY-MM-DD');
     let inidate = date.format(mydate, 'YYYY-MM-DD')
@@ -135,58 +145,53 @@ app.post('/addregister', havepermissions, async (req, res) => {
             monto: monto
         }
         data.historial.push(historic)
-        console.log(data._id);
+
 
         // FUNCION DE NO REPETIR FECHAS 
 
         usuario.findByIdAndUpdate(data._id, { historial: data.historial }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
-            console.log(usuarioBD);
+
             if (err) {
                 return res.redirect("/error")
             }
 
         })
-        //console.log(data.historial);
+
     });
 
+    let mensaje = '';
+    mensaje += 'Su pago se ha realizado con exito'
+    let mailOptions = {
+        from: 'tesisdecimo89@gmail.com',
+        to: user.email,
+        subject: 'Abono Academia Ecuavoly Registrada',
+        text: mensaje
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
 
+    });
 
-
-
-
-
-
-
-
-    /*
-        let mensaje = '';
-        mensaje += 'Su pago se ha realizado con exito'
-        let mailOptions = {
-            from: 'tesisdecimo89@gmail.com',
-            to: user.email,
-            subject: 'Abono Academia Ecuavoly Registrada',
-            text: mensaje
-        };
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email enviado: ' + info.response);
-            }
-        });
-    */
     res.json({ ok: true })
 
 })
 
 app.get('/users', havepermissions, (req, res) => {
+
     usuario.find({}, { email: 1, role: 1, nombre: 1, uid: 1, inscripcion: 1 }, (err, users) => {
 
         let message = false
         if (req.query.success) {
             message = true
         }
-        res.render('users', { usuarios: users, message })
+        let data = {
+            loged: req.session.loged,
+            role: req.session.role,
+            nombre: req.session.nombre,
+            username: req.session.username,
+            email: req.session.email,
+            uid: req.session.uid
+        }
+        res.render('users', { usuarios: users, data: data })
 
     })
 })
@@ -199,12 +204,117 @@ app.get('/payusers', havepermissions, (req, res) => {
         if (req.query.success) {
             message = true
         }
-        res.render('userstopay', { usuarios: users, message })
+        let data = {
+            loged: req.session.loged,
+            role: req.session.role,
+            nombre: req.session.nombre,
+            username: req.session.username,
+            email: req.session.email,
+            uid: req.session.uid
+        }
+        res.render('userstopay', { usuarios: users, data: data })
 
     })
 })
 
+let getToday = () => {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
 
+    today = yyyy + '-' + mm + '-' + dd;
+    today = date.parse(today, 'YYYY-MM-DD');
+    var yesterday = date.addDays(today, -1)
+    var tomorrow = date.addDays(today, 1)
+
+    return [today, yesterday, tomorrow]
+}
+app.get('/pays', havepermissions, (req, res) => {
+
+    var actuales = []
+    var vencidos = []
+    var proximos = []
+    usuario.find({
+        'entrenador': { $in: req.query.uid }
+    }, { email: 1, role: 1, nombre: 1, uid: 1, inscripcion: 1, historial: 1, cell: 1 }, (err, users) => {
+        users.forEach(user => {
+            if (user.historial.length !== 0) {
+                user.historial.forEach(element => {
+                    let userdate = date.parse(element.findate, 'YYYY-MM-DD');
+                    let days = getToday()
+                    let today = days[0]
+                    let yesterday = days[1]
+                    let tomorrow = days[2]
+                    if (userdate < yesterday) {
+
+                        let data = {
+                            uid: user.uid,
+                            nombre: user.nombre,
+                            vencido: date.format(userdate, 'YYYY-MM-DD'),
+                            monto: element.monto,
+                            url: sendWhats(user.cell, user.nombre.replace(" ", "%20"), String(element.monto), element.findate, '25')
+                        }
+                        vencidos.push(data)
+                    }
+                    if (userdate > tomorrow) {
+                        let data = {
+                            uid: user.uid,
+                            nombre: user.nombre,
+                            proximo: date.format(userdate, 'YYYY-MM-DD'),
+                            monto: element.monto,
+                            url: sendWhats(user.cell, user.nombre.replace(" ", "%20"), String(element.monto), element.findate, '25')
+                        }
+                        proximos.push(data)
+                    }
+                    if (userdate == today || userdate >= yesterday && userdate <= tomorrow) {
+                        let data = {
+                            uid: user.uid,
+                            nombre: user.nombre,
+                            actual: date.format(userdate, 'YYYY-MM-DD'),
+                            monto: element.monto,
+                            url: sendWhats(user.cell, user.nombre.replace(" ", "%20"), String(element.monto), element.findate, '25')
+                        }
+                        actuales.push(data)
+                    }
+
+
+
+                });
+            }
+
+
+        });
+
+        let data = {
+            loged: req.session.loged,
+            role: req.session.role,
+            nombre: req.session.nombre,
+            username: req.session.username,
+            email: req.session.email,
+            uid: req.session.uid
+        }
+        res.render('mypays', { vencidos: vencidos, proximos: proximos, actuales: actuales, data: data })
+    });
+
+})
+app.get('/myusers', havepermissions, (req, res) => {
+    usuario.find({
+        'entrenador': { $in: req.query.uid }
+    }, { email: 1, role: 1, nombre: 1, uid: 1, inscripcion: 1, historial: 1 }, (err, users) => {
+
+        let data = {
+            loged: req.session.loged,
+            role: req.session.role,
+            nombre: req.session.nombre,
+            username: req.session.username,
+            email: req.session.email,
+            uid: req.session.uid
+        }
+        res.render('myusers', { usuarios: users, data: data })
+    });
+
+})
 
 app.get('/adduser', havepermissions, (req, res) => {
     res.render('adduser', { message: false })
@@ -222,7 +332,7 @@ app.post('/login', async (req, res) => {
 
     let err = false
     if (err) {
-        // console.log("eror base");
+
     } else {
         if (user) {
             bcrypt.compare(req.body.password, user.password, (err, result) => {
@@ -306,7 +416,8 @@ app.post('/doupdateuser', havepermissions, async (req, res) => {
         username: req.body.username,
         role: req.body.role,
         email: req.body.email,
-        inscripcion: req.body.inscripcion
+        inscripcion: req.body.inscripcion,
+        entrenador: req.body.entrenador
     }
     usuario.findByIdAndUpdate(req.body.uid, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
         if (err) {
@@ -375,14 +486,14 @@ app.post('/recuperarPass', async (req, res) => {
 
     let err = false
     if (err) {
-        // console.log("eror base");
+
     } else {
 
         if (user) {
 
             let mensaje = '';
-            // mensaje += 'De clic en el siguiente enlace para realizar el cambio de su contraseña: https://app-emm.herokuapp.com/editarPass?uid='+user.uid
-            mensaje += 'De clic en el siguiente enlace para realizar el cambio de su contraseña: http://localhost:3000/editarPass?uid=' + user.uid
+            mensaje += 'De clic en el siguiente enlace para realizar el cambio de su contraseña: https://app-emm.herokuapp.com/editarPass?uid=' + user.uid
+
             let mailOptions = {
                 from: 'tesisdecimo88@gmail.com',
                 to: user.email,
@@ -390,11 +501,7 @@ app.post('/recuperarPass', async (req, res) => {
                 text: mensaje
             };
             transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email enviado: ' + info.response);
-                }
+
             });
             res.redirect('/login')
 
@@ -422,7 +529,7 @@ app.get('/editarPass', (req, res) => {
         usuario.findOne({ uid: uid }),
 
     ]).then(([usuario]) => {
-        console.log(usuario);
+
         let admin = false
         if (usuario.role == 'ADMIN_ROLE') {
             admin = true
@@ -447,7 +554,7 @@ app.post('/doupdatePass', async (req, res) => {
         }
         usuario.findByIdAndUpdate(req.body.idusuario, user, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
             if (err) {
-                //  console.log(err);
+
                 return res.redirect("/error")
             }
             var string = encodeURIComponent(true);
@@ -458,7 +565,7 @@ app.post('/doupdatePass', async (req, res) => {
 
 app.post('/change', (req, res) => {
     let iduser = req.body.uid
-    console.log(iduser);
+
     switch (req.body.atr) {
         case 'nombre':
             usuario.findByIdAndUpdate(iduser, { nombre: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
@@ -497,7 +604,9 @@ app.post('/change', (req, res) => {
             })
             break;
         case 'cell':
-            usuario.findByIdAndUpdate(iduser, { cell: req.body.data }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
+            let cel = req.body.data.substring(1)
+
+            usuario.findByIdAndUpdate(iduser, { cell: cel }, { new: true, runValidators: true, context: 'query' }, (err, usuarioBD) => {
                 if (err) {
                     return res.redirect("/error")
                 }

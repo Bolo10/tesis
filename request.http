@@ -1,0 +1,31 @@
+@api = http://localhost:3000/ 
+
+GET {{api}}
+
+###
+POST {{api}}signup 
+Content-Type: application/json
+
+{
+    "nombre":"user10",
+    "username":"usuario10",
+    "email":"usuario10@gmail.com",
+    "password": "Boloismenia98"
+}
+
+###
+POST {{api}}doupdateuser 
+Content-Type: application/json
+
+{
+    "nombre":"user10",
+    "username":"usuario10",
+    "role":"USER_ROLE",
+    "email":"usuario10@gmail.com",
+    "inscripcion": "false",
+    "entrendor":"856d09fa-0e70-48f9-ab8b-7d890375ed00",
+}
+###
+GET {{api}}pays2?uid=856d09fa-0e70-48f9-ab8b-7d890375ed00
+
+

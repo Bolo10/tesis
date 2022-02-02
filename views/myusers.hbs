@@ -1,0 +1,63 @@
+{{>header}}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.4/r-2.2.9/datatables.min.css" />
+<link rel="stylesheet" href="assets/css/tables.css">
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        {{>dashbar}}
+
+        <div style="margin-top: 50px;">
+            <table id="example" class="table table-striped table-bordered" style="width:50%">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Nombre</th>
+
+                        <th>Inscripción</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each usuarios}}
+                    <tr>
+                        <td>{{this.email}}</td>
+                        <td>{{this.nombre}}</td>
+
+
+                        <td>{{#if this.inscripcion}} SI {{else}} NO {{/if}}</td>
+                        <td>
+                            <form method="POST" action="/updateuser">
+                                <input hidden value="{{this.uid}}" name="uid">
+                                <input type="submit" value="Modificar">
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="/deleteuser">
+                                <input hidden value="{{this.uid}}" name="duid">
+                                <input type="submit" value="Eliminar Usuario">
+                            </form>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+{{> packages}}
+<script>
+
+    mytable = $(document).ready(function () {
+        $('#example').DataTable({
+            responsive: true,
+            "sDom": '<"wrapper"lfptip>'
+        });
+
+    });
+</script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.4/r-2.2.9/datatables.min.js"></script>
+{{>footer}}

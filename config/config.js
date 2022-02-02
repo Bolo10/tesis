@@ -30,7 +30,6 @@ urlDB = 'mongodb+srv://adminvoucher:voucheradmin@voucher.9bpcw.mongodb.net/myFir
 process.env.URLDB = urlDB;
 
 
-
 //=======================
 // MAIL
 //=======================
