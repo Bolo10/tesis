@@ -12,7 +12,7 @@ function addchange(elemento, atributo) {
 }
 function mya(elemento, atributo) {
     var uid = document.getElementById('uid').value
-    console.log(uid);
+
     let data
     if (atributo == 'sexo') {
         data = elemento
@@ -70,23 +70,38 @@ function sendgender() {
 }
 
 function changepass() {
+
     if (document.getElementById('inputPassword').value == document.getElementById('inputCPassword').value && document.getElementById("inputPassword").validity.valid && document.getElementById("apassword").validity.valid) {
         $.ajax({
             credentials: 'same-origin',
             type: 'POST',
             url: '/change',
-            data: { apassword: document.getElementById('apassword').value, atr: 'password', npassword: document.getElementById('inputPassword').value },
+            data: { apassword: document.getElementById('apassword').value, atr: 'password', npassword: document.getElementById('inputPassword').value, uid: document.getElementById('uid').value },
             dataType: 'json'                              // <-- add this
             //contentType: 'application/json; charset=utf-8' // <-- remove this
         })
             .done(function (result) {
                 if (result.ok) {
                     document.getElementById('cpass').innerHTML = '<h3>Contraseña Cambiada</h3>'
-                } else {
+                }
+                if (result.same) {
+
                     document.getElementById('apassword').value = ''
-                    document.getElementById('actual').innerHTML = 'Vuelva a introducir la Contraseña'
+                    document.getElementById('inputPassword').value = ''
+                    document.getElementById('inputCPassword').value = ''
+                    document.getElementById('actual').innerHTML = 'Estas introduciendo la misma contraseña'
                     document.getElementById('actual').style.color = 'red'
                 }
+
+                if (result.incorrect) {
+                    document.getElementById('apassword').value = ''
+                    document.getElementById('inputPassword').value = ''
+                    document.getElementById('inputCPassword').value = ''
+                    document.getElementById('actual').innerHTML = 'Contraseña incorrecta. Vuelva a introducir la Contraseña'
+                    document.getElementById('actual').style.color = 'red'
+                }
+
+
             })
             .fail(function (xhr, status, error) {
             })

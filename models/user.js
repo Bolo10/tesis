@@ -75,6 +75,9 @@ let usuarioSchema = new schema({
         type: Boolean,
         default: false
 
+    }, mensual: {
+        type: Number,
+        default: 20
     }
 }, { collection: 'users' })
 usuarioSchema.plugin(uniqueValidator, { message: `{PATH} debe ser único` })

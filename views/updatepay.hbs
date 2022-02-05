@@ -5,8 +5,7 @@
         {{>dashbar}}
         <input hidden id="uid" value="{{usuario.uid}}">
 
-        <form id="registerform" class="form-signin text-center" action="/doupdateuser" method="POST"
-            onsubmit="return submitvalidate()">
+        <form id="registerform" class="form-signin text-center" onsubmit="return submitvalidate()">
 
             <h1 class="h3 mb-3 font-weight-normal">Modificar Pagos de {{usuario.nombre}}</h1>
 
@@ -56,15 +55,12 @@
                 </div>
             </div>
 
-
-
-            <button class="btn btn-lg  btn-success btn-block" type="submit">Confirmar Cambios</button>
         </form>
     </div>
 </div>
 {{> packages}}
 <script src="/javascripts/register.js"></script>
-<script src="/assets/js/signup-helpers.js"></script>
+
 <script>
     function alphaOnly(event) {
         var key = event.keyCode;
@@ -74,42 +70,7 @@
         var key = event.keyCode;
         return ((key >= 65 && key <= 90) || key == 8 || key == 9 || (key >= 48 && key <= 57) || (key >= 96 && key <= 105));
     };
-    function ValidateEmail(mail) {
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-            return (true)
-        }
-        // alert("You have entered an invalid email address!")
-        return (false)
-    }
-    $(document).ready(function () {
 
-        $("#inputEmail").on('keyup blur', function () {
-            emailb = ValidateEmail(document.getElementById("inputEmail").value)
-            if (emailb) {
-                $.ajax({
-                    type: 'GET',
-                    url: '/emails',
-                    data: { emailt: document.getElementById("inputEmail").value },
-                    dataType: 'json'                              // <-- add this
-                    //contentType: 'application/json; charset=utf-8' // <-- remove this
-                })
-                    .done(function (result) {
-                        if (result.exist && document.getElementById('inputEmail').value != document.getElementById("emailp").value) {
-                            document.getElementById("emailver").innerHTML = '<span style="color: red;">Email ya registrado</span>'
-                            document.getElementById("inputEmail").setCustomValidity('El correo ya está resgistrado');
-                        } else {
-                            document.getElementById("emailver").innerHTML = '<span style="color: green;">Email disponible</span>'
-                            document.getElementById("inputEmail").setCustomValidity('');
-                        }
-                    })
-                    .fail(function (xhr, status, error) {
-                    })
-                    .always(function (data) {
-                    });
-            } else {
-                document.getElementById("emailver").innerHTML = '<span style="color: red;">Email Inválido</span>'
-            }
-        });
-    });
+
 </script>
 {{> footer}}

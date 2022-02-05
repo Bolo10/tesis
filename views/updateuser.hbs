@@ -39,28 +39,37 @@
 
             <label class="sr-only" for="role">Inscripción</label>
             <select class="form-control register" id="inscripcion" name="inscripcion" onchange="rolec()">
-                <option selected="true" disabled="disabled"> Seleccione si ya esta inscrito</option>
+                <option value='none' selected="true" disabled="disabled"> Seleccione si ya esta inscrito</option>
 
                 <option value="true">Pagado</option>
                 <option value="false">No Pagado</option>
 
             </select>
             <label class="sr-only" for="role">Entrenador</label>
-            <select class="form-control register" id="inscripcion" name="inscripcion" onchange="rolec()">
-                <option selected="true" disabled="disabled"> Seleccione si su entrenador</option>
-
-                <option value="true">Pagado</option>
-                <option value="false">No Pagado</option>
-
+            <select class="form-control register" id="entrenador" name="entrenador" onchange="rolec()">
+                <option value='none' selected="true" disabled="disabled"> Seleccione si su entrenador</option>
+                {{#each entrenadores}}
+                {{#this}}
+                <option value="{{uid}}">{{nombre}}</option>
+                {{/this}}
+                {{/each}}
             </select>
-            <input hidden name="uid" value="{{usuario._id}}">
 
+            <label for="inputMensual" class="sr-only">Mensualidad</label>
+            <input type="number" autocomplete="off" name="mensual" id="inputMensual" class="form-control register"
+                placeholder="Mensual" required="" autofocus="" value="{{usuario.mensual}}">
+            <input hidden name="uid" value="{{usuario._id}}">
+            <input hidden id="ainscripcion" value="{{usuario.inscripcion}}">
+            <input hidden id="aentrenador" value="{{usuario.entrenador}}">
             <button class="btn btn-lg  btn-success btn-block" type="submit">Confirmar Cambios</button>
+
+
         </form>
     </div>
 </div>
+
 {{> packages}}
-<script src="/assets/js/signup-helpers.js"></script>
+<script src="/assets/js/updateuser-helper.js"></script>
 <script>
     function alphaOnly(event) {
         var key = event.keyCode;
@@ -106,6 +115,24 @@
                 document.getElementById("emailver").innerHTML = '<span style="color: red;">Email Inválido</span>'
             }
         });
+        var aentrenador = document.getElementById("aentrenador").value
+        if (aentrenador == '') {
+            var entrenador = document.getElementById("entrenador")
+            entrenador.value = 'none'
+        } else {
+            var entrenador = document.getElementById("entrenador")
+            entrenador.value = aentrenador
+        }
+        var ainscripcion = document.getElementById("ainscripcion").value
+        if (ainscripcion == '') {
+            var inscripcion = document.getElementById("inscripcion")
+            inscripcion.value = 'none'
+        } else {
+            var inscripcion = document.getElementById("inscripcion")
+            inscripcion.value = ainscripcion
+        }
+
+
     });
 </script>
 {{> footer}}
