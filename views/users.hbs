@@ -28,13 +28,20 @@
                         <td>
                             <form method="POST" action="/updateuser">
                                 <input hidden value="{{this.uid}}" name="uid">
-                                <input type="submit" value="Modificar">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-person-check-fill"></i>
+                                    Modificar Usuario
+                                </button>
                             </form>
                         </td>
                         <td>
                             <form method="POST" action="/deleteuser">
                                 <input hidden value="{{this.uid}}" name="duid">
-                                <input type="submit" value="Eliminar Usuario">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-person-x-fill"></i>
+                                    Eliminar Usuario
+                                </button>
+
                             </form>
                         </td>
                     </tr>

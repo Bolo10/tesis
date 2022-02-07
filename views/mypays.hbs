@@ -31,13 +31,18 @@
 
                                 <td>{{this.monto}}</td>
                                 <th>{{this.mensual}}</th>
-                                <td><a href="{{this.url}}" class="btn btn-success btn-lg" tabindex="-1"
-                                        role="button">Enviar Whats</a></td>
+                                <td>
+                                    <a href="{{this.url}}" class="btn btn-success btn-lg" tabindex="-1" role="button"><i
+                                            class="bi bi-whatsapp"></i>Enviar Whats</a>
+                                </td>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/updateuser">
+                                    <form method="POST" action="/updatepay">
                                         <input hidden value="{{this.uid}}" name="uid">
-                                        <input type="submit" value="Modificar">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-calendar-check-fill"></i>
+                                            Modificar Pago
+                                        </button>
                                     </form>
                                 </td>
 
@@ -72,13 +77,20 @@
                                 <td>{{this.nombre}}</td>
                                 <td>{{this.monto}}</td>
                                 <td>{{this.mensualidad}}</td>
-                                <td><a href="{{this.url}}" class="btn btn-success btn-lg" tabindex="-1"
-                                        role="button">Enviar Whats</a></td>
+                                <td>
+
+                                    <a href="{{this.url}}" class="btn btn-success btn-lg" tabindex="-1" role="button"><i
+                                            class="bi bi-whatsapp"></i>Enviar Whats</a>
+                                </td>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/updateuser">
+                                    <form method="POST" action="/updatepay">
                                         <input hidden value="{{this.uid}}" name="uid">
-                                        <input type="submit" value="Modificar">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-calendar-check-fill"></i>
+                                            Modificar Pago
+                                        </button>
+
                                     </form>
                                 </td>
 
@@ -116,7 +128,10 @@
                                 <td>
                                     <form method="POST" action="/updatepay">
                                         <input hidden value="{{this.uid}}" name="uid">
-                                        <input type="submit" value="Modificar">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-calendar-check-fill"></i>
+                                            Modificar Pago
+                                        </button>
                                     </form>
                                 </td>
 

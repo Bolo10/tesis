@@ -561,7 +561,7 @@ app.post('/deleteuser', havepermissions, (req, res) => {
         email: req.session.email,
         uid: req.session.uid
     }
-    res.redirect("dashboard", { data: data })
+    res.render("dashboard", { data: data })
 })
 
 app.post('/recuperarPass', async (req, res) => {
