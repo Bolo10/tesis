@@ -213,7 +213,6 @@ app.post('/addregister', havepermissions, async (req, res) => {
         text: mensaje
     };
     transporter.sendMail(mailOptions, function (error, info) {
-
     });
 
     res.json({ ok: true })
@@ -434,7 +433,17 @@ app.post('/signup', async (req, res) => {
 
 })
 
+app.get('/emails', function (req, res, err) {
+    usuario.find({ email: req.query.emailt }, function (error, emails) {
+        // ids is an array of all ObjectIds
+        if (emails.length == 0) {
+            res.json({ exist: false })
+        } else {
+            res.json({ exist: true })
+        }
+    });
 
+});
 
 // UPDATE USER CODE
 
